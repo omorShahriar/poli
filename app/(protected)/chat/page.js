@@ -1,7 +1,7 @@
 import { createServerClient } from "@/utils/supabase-server";
-import ChatInput from "@/components/ChatInput";
-import Messages from "@/components/Messages";
+
 import Container from "@/components/Container";
+import ChatContainer from "@/components/ChatContainer";
 export const revalidate = 0;
 const page = async () => {
   const supabase = createServerClient();
@@ -10,10 +10,7 @@ const page = async () => {
   return (
     <>
       <Container>
-        <div className="flex flex-col h-full">
-          <Messages serverMessages={data ?? []} />
-          <ChatInput />
-        </div>
+        <ChatContainer serverMessages={data ?? []} />
       </Container>
     </>
   );

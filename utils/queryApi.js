@@ -7,7 +7,7 @@ export const generateAnswer = async (prompt) => {
       temperature: 0.1,
       max_tokens: 1000,
     })
-    .then((res) => res.data.choices[0].text)
+    .then((res) => res.data.choices[0].text.replace(/^(\n)+/, ""))
     .catch((error) => `sorry can't help you at this moment! ${error.message}`);
 
   return res;

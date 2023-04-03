@@ -3,7 +3,7 @@ import { useState } from "react";
 import { createBrowserClient } from "@/utils/supabase-browser";
 import { FaPaperPlane } from "react-icons/fa";
 
-const ChatInput = () => {
+const ChatInput = ({ updateMessages }) => {
   const [message, setMessage] = useState("");
 
   const supabase = createBrowserClient();
@@ -11,22 +11,26 @@ const ChatInput = () => {
     e.preventDefault();
     const { message } = Object.fromEntries(new FormData(e.currentTarget));
 
-    await supabase
+    const { data } = await supabase
       .from("messages")
       .insert({ content: message, speaker: "user" })
-      .then(async () => {
-        setMessage("");
-
-        await fetch("/api/askQuestion", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            query: message,
-          }),
-        });
-      });
+      .select("content,speaker");
+    const userMessage = data[0];
+    setMessage("");
+    console.log("This is user message: ", userMessage);
+    updateMessages(userMessage);
+    const apiReply = await fetch("/api/askQuestion", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        query: message,
+      }),
+    });
+    const { data: poliMessage } = await apiReply.json();
+    console.log("This is poli message: ", poliMessage);
+    updateMessages(poliMessage);
   };
   return (
     <div className="py-4  flex items-center justify-center ">
