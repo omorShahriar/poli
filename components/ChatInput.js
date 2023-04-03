@@ -3,7 +3,7 @@ import { useState } from "react";
 import { createBrowserClient } from "@/utils/supabase-browser";
 import { FaPaperPlane } from "react-icons/fa";
 
-const ChatInput = ({ updateMessages }) => {
+const ChatInput = ({ updateMessages, thinking }) => {
   const [message, setMessage] = useState("");
 
   const supabase = createBrowserClient();
@@ -17,8 +17,9 @@ const ChatInput = ({ updateMessages }) => {
       .select("content,speaker");
     const userMessage = data[0];
     setMessage("");
-    console.log("This is user message: ", userMessage);
+
     updateMessages(userMessage);
+    thinking(true);
     const apiReply = await fetch("/api/askQuestion", {
       method: "POST",
       headers: {
@@ -29,8 +30,9 @@ const ChatInput = ({ updateMessages }) => {
       }),
     });
     const { data: poliMessage } = await apiReply.json();
-    console.log("This is poli message: ", poliMessage);
+
     updateMessages(poliMessage);
+    thinking(false);
   };
   return (
     <div className="py-4  flex items-center justify-center ">
